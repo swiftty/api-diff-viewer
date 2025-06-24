@@ -1,0 +1,31 @@
+# base settings
+# configs
+configs:
+  Debug: debug
+  Release: release
+
+# settings
+settings:
+  base:
+    VERSIONING_SYSTEM: apple-generic
+  configs:
+    Debug:
+      OTHER_SWIFT_FLAGS: -DDEBUG
+
+# template
+targetTemplates:
+  Platform:
+    platform: iOS
+
+  Application:
+    type: application
+    templates:
+      - Platform
+    settings:
+      base:
+        SUPPORTED_PLATFORMS: "macosx"
+        TARGETED_DEVICE_FAMILY: "1,2,7"
+        SUPPORTS_MACCATALYST: NO
+        SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD: NO
+        SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD: NO
+        DEVELOPMENT_TEAM: B2TD54U4MA

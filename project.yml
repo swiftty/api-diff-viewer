@@ -1,0 +1,48 @@
+name: api-diff-viewer
+
+include:
+  - path: xcodegen/project.base.yml
+    relativePaths: false
+
+options:
+  bundleIdPrefix: com.swiftty.api-diff-viewer
+  developmentLanguage: ja
+  localPackagesGroup: ""
+
+packages:
+  ApiDiffViewer:
+    path: api-diff-viewer
+
+targets:
+  App:
+    templates:
+      - Application
+    settings:
+      base:
+        ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
+        GENERATE_INFOPLIST_FILE: YES
+        SDKROOT: macosx
+        MACOSX_DEPLOYMENT_TARGET: "15.5"
+      configs:
+        Debug:
+          PRODUCT_BUNDLE_IDENTIFIER: com.swiftty.api-diff-viewer.App-debug
+    # scheme:
+    #   testPlans:
+    #     - path: App.xctestplan
+    #       defaultPlan: true
+    sources:
+      - App
+      - path: project.yml
+        group: Configurations
+        buildPhase: none
+      # - path: api-diff-viewer/.swiftlint.yml
+      #   group: Configurations
+      #   buildPhase: none
+      # - path: App.xctestplan
+      #   group: Configurations
+      #   buildPhase: none
+      # - path: Configurations
+      #   buildPhase: none
+    dependencies:
+      - package: ApiDiffViewer
+        product: ApiDiffViewer
