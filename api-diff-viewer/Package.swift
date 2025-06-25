@@ -21,8 +21,20 @@ let package = Package(
     ],
     targets: [
         .target(
-            name: "AppProvider"
+            name: "AppProvider",
+            dependencies: [
+                "RootPage"
+            ]
         ),
+        .target(
+            name: "RootPage",
+            dependencies: [
+                "SidePanePage"
+            ]
+        ),
+        .target(
+            name: "SidePanePage"
+        )
     ]
 )
 
