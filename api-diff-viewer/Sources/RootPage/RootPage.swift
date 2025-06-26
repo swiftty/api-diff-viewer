@@ -1,5 +1,6 @@
 public import SwiftUI
 import SidePanePage
+import APIViewerPage
 
 public struct RootPage: View {
     public init() {}
@@ -7,10 +8,10 @@ public struct RootPage: View {
     public var body: some View {
         NavigationSplitView {
             SidePanePage(selection: $selectedURL)
-        } content: {
-
         } detail: {
-
+            if let selectedURL {
+                APIViewerPage(swiftinterfacePath: selectedURL)
+            }
         }
     }
 

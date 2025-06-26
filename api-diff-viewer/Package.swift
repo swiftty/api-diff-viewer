@@ -6,7 +6,7 @@ import PackageDescription
 let package = Package(
     name: "ApiDiffViewer",
     platforms: [
-        .macOS(.v15),
+        .macOS("15.4"),
     ],
     products: [
         // Products define the executables and libraries a package produces, making them visible to other packages.
@@ -29,11 +29,18 @@ let package = Package(
         .target(
             name: "RootPage",
             dependencies: [
-                "SidePanePage"
+                "SidePanePage",
+                "APIViewerPage"
             ]
         ),
         .target(
             name: "SidePanePage"
+        ),
+        .target(
+            name: "APIViewerPage",
+            resources: [
+                .copy("Resources")
+            ]
         )
     ]
 )
