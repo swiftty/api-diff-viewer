@@ -16,6 +16,8 @@ let package = Package(
         ),
     ],
     dependencies: [
+        .package(url: "https://github.com/swiftlang/swift-syntax.git", from: "601.0.1"),
+
         .package(url: "https://github.com/swiftty/XcodeGenBinary.git", from: "2.43.0"),
         .package(url: "https://github.com/swiftty/SwiftLintBinary.git", exact: "0.59.1-patch"),
     ],
@@ -38,6 +40,11 @@ let package = Package(
         ),
         .target(
             name: "APIViewerPage",
+            dependencies: [
+                .product(name: "SwiftParser", package: "swift-syntax"),
+                .product(name: "SwiftSyntax", package: "swift-syntax"),
+                .product(name: "SwiftSyntaxBuilder", package: "swift-syntax"),
+            ],
             resources: [
                 .copy("Resources")
             ]

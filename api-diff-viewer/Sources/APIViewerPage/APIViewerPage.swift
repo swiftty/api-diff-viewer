@@ -24,8 +24,6 @@ private struct WebView: NSViewRepresentable {
 
     func makeNSView(context: Context) -> WKWebView {
         let webView = context.coordinator.webView
-        let backgroundColor = NSColor(red: 0.133, green: 0.153, blue: 0.18, alpha: 1)
-        webView.underPageBackgroundColor = backgroundColor
 
         let index = Bundle.module.url(forResource: "Resources/index", withExtension: "html")!
         webView.loadFileURL(index, allowingReadAccessTo: index)
@@ -55,7 +53,9 @@ private struct WebView: NSViewRepresentable {
             Task {
                 do {
                     let content = try String(contentsOf: swiftinterfacePath, encoding: .utf8)
-                    let escaped = try String(data: JSONEncoder().encode(content), encoding: .utf8) ?? ""
+                    let filtered = try SyntaxFilter.filter(conditions: [.ios: .init("26"...)], from: content)
+
+                    let escaped = try String(data: JSONEncoder().encode(filtered), encoding: .utf8) ?? ""
 
                     try await webView.evaluateJavaScript("""
                     const container = document.getElementById("code-snippet");
