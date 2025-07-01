@@ -45,6 +45,12 @@ class SyntaxFilter: SyntaxRewriter {
             upper = range.upperBound
         }
 
+        init?(min: String, max: String) {
+            guard !min.isEmpty || !max.isEmpty else { return nil }
+            lower = min.isEmpty ? nil : min
+            upper = max.isEmpty ? nil : max
+        }
+
         func contains(_ other: String) -> Bool {
             func compare(_ lhs: String?, fallback: ComparisonResult? = nil) -> ComparisonResult? {
                 guard let lhs else { return fallback }
@@ -59,8 +65,8 @@ class SyntaxFilter: SyntaxRewriter {
 
     let conditions: [Platform: VersionRange]
 
-    init(conditions: [Platform: VersionRange]) {
-        self.conditions = conditions
+    init(conditions: [Platform: VersionRange?]) {
+        self.conditions = conditions.compactMapValues(\.self)
     }
 
     override func visit(_ node: ExtensionDeclSyntax) -> DeclSyntax {
@@ -165,7 +171,7 @@ class SyntaxFilter: SyntaxRewriter {
                         return true
                     }
                 }
-                return false
+                return conditions.isEmpty
             }
 
             return checkConditions()
@@ -178,7 +184,7 @@ class SyntaxFilter: SyntaxRewriter {
 }
 
 extension SyntaxFilter {
-    static func filter(conditions: [Platform: VersionRange], from source: String) throws -> String {
+    static func filter(conditions: [Platform: VersionRange?], from source: String) throws -> String {
         let syntax = Parser.parse(source: source)
         let result = SyntaxFilter(conditions: conditions)
             .rewrite(syntax)
