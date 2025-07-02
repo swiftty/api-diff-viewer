@@ -65,8 +65,12 @@ class SyntaxFilter: SyntaxRewriter {
 
     let conditions: [Platform: VersionRange]
 
-    init(conditions: [Platform: VersionRange?]) {
-        self.conditions = conditions.compactMapValues(\.self)
+    init?(conditions: [Platform: VersionRange?]) {
+        guard case let conditions = conditions.compactMapValues(\.self),
+              !conditions.isEmpty else {
+            return nil
+        }
+        self.conditions = conditions
     }
 
     override func visit(_ node: ExtensionDeclSyntax) -> DeclSyntax {
@@ -185,9 +189,12 @@ class SyntaxFilter: SyntaxRewriter {
 
 extension SyntaxFilter {
     static func filter(conditions: [Platform: VersionRange?], from source: String) throws -> String {
+        guard let filter = SyntaxFilter(conditions: conditions) else {
+            return source
+        }
+
         let syntax = Parser.parse(source: source)
-        let result = SyntaxFilter(conditions: conditions)
-            .rewrite(syntax)
+        let result = filter.rewrite(syntax)
 
         return String(bytes: result.syntaxTextBytes, encoding: .utf8) ?? ""
     }
@@ -219,9 +226,9 @@ import Playgrounds
     let syntax = Parser.parse(source: content)
     let result = SyntaxFilter(
         conditions: [.ios: .init("26"...)]
-    ).rewrite(syntax)
+    )?.rewrite(syntax)
 
-    let output = String(bytes: result.syntaxTextBytes, encoding: .utf8)
+    let output = String(bytes: result?.syntaxTextBytes ?? [], encoding: .utf8)
 
     _ = output
 }

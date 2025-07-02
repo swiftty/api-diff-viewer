@@ -1,95 +1,50 @@
 public import SwiftUI
+public import Domain
 import WebKit
 
 public struct APIViewerPage: View {
-    public init(swiftinterfacePath: URL) {
+    public init(
+        swiftinterfacePath: URL,
+        platform: Platform,
+        filterMinVersion: String,
+        filterMaxVersion: String
+    ) {
         self.swiftinterfacePath = swiftinterfacePath
+        self.platform = platform
+        self.filterMinVersion = filterMinVersion
+        self.filterMaxVersion = filterMaxVersion
     }
 
     public var body: some View {
         content()
             .id(swiftinterfacePath)
-            .inspector(isPresented: $isInspected) {
-                inspector()
-            }
     }
 
     // MARK: - impl
     private let swiftinterfacePath: URL
-
-    @State private var isInspected = true
-    @State private var platform: String = "iOS"
-    @State private var isAvailablePresented = false
-
-    @State private var availableMinVersion: String = ""
-    @State private var availableMaxVersion: String = ""
+    private let platform: Platform
+    private let filterMinVersion: String
+    private let filterMaxVersion: String
 
     @ViewBuilder
     private func content() -> some View {
         // swiftlint:disable switch_case_alignment
         let platform: SyntaxFilter.Platform = switch platform {
-            case "iOS": .ios
-            case "macOS": .macos
-            case "tvOS": .tvos
-            case "watchOS": .watchos
-            case "visionOS": .visionos
-            case "macCatalyst": .maccatalyst
-            default: .ios
+            case .iOS(nil), .iOS(.simulator): .ios
+            case .macOS: .macos
+            case .tvOS: .tvos
+            case .watchOS: .watchos
+            case .visionOS: .visionos
+            case .iOS(.macCatalyst): .maccatalyst
         }
         // swiftlint:enable switch_case_alignment
 
         WebView(
             swiftinterfacePath: swiftinterfacePath,
             conditions: [
-                platform: .init(min: availableMinVersion, max: availableMaxVersion)
+                platform: .init(min: filterMinVersion, max: filterMaxVersion)
             ]
         )
-    }
-
-    private func inspector() -> some View {
-        Form {
-            Picker("Platform", selection: $platform) {
-                let targets = [
-                    "iOS",
-                    "macOS",
-                    "tvOS",
-                    "watchOS",
-                    "visionOS",
-                    "macCatalyst"
-                ]
-                ForEach(targets, id: \.self) { target in
-                    Text(target)
-                        .tag(target)
-                }
-            }
-
-            LabeledContent("Available") {
-                HStack {
-                    let version = [
-                        availableMinVersion,
-                        (!availableMinVersion.isEmpty || !availableMaxVersion.isEmpty ? "~" : ""),
-                        availableMaxVersion
-                    ]
-                    Text(version.filter { !$0.isEmpty }.joined(separator: " "))
-
-                    Button("Edit") {
-                        isAvailablePresented.toggle()
-                    }
-                }
-            }
-            .sheet(isPresented: $isAvailablePresented) {
-                AvailableEditView(minText: $availableMinVersion, maxText: $availableMaxVersion)
-            }
-        }
-        .toolbar {
-            ToolbarItemGroup {
-                Spacer()
-
-                Button("Inspect", systemImage: "sidebar.trailing") {
-                    isInspected.toggle()
-                }
-            }
-        }
     }
 
     private struct AvailableEditView: View {
@@ -222,6 +177,12 @@ private struct WebView: NSViewRepresentable {
 #Preview {
     // swiftlint:disable:next line_length
     let path = URL(filePath: "/Applications/Xcode-26.0.0-Beta.2.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk/System/Library/Frameworks/_PermissionKit_UIKit.framework/Modules/_PermissionKit_UIKit.swiftmodule/arm64e-apple-ios.swiftinterface")
-    APIViewerPage(swiftinterfacePath: path)
-        .frame(height: 500)
+
+    APIViewerPage(
+        swiftinterfacePath: path,
+        platform: .iOS(),
+        filterMinVersion: "",
+        filterMaxVersion: ""
+    )
+    .frame(height: 500)
 }

@@ -1,9 +1,12 @@
 public import SwiftUI
+public import Domain
 
 public struct SidePanePage: View {
     public init(
+        platform: Platform,
         selection: Binding<URL?>
     ) {
+        self.platform = platform
         _selection = selection
     }
 
@@ -25,7 +28,17 @@ public struct SidePanePage: View {
                 allowedContentTypes: [.directory, .applicationBundle]
             ) { result in
                 do {
-                    items = try Operations.loadFrameworks(at: result.get())
+                    let url = try result.get()
+                    currentPath = url
+                    items = try Operations.loadFrameworks(at: url, within: platform)
+                } catch {
+                    print(error)
+                }
+            }
+            .onChange(of: platform) { _, newPlatform in
+                do {
+                    guard let url = currentPath else { return }
+                    items = try Operations.loadFrameworks(at: url, within: newPlatform)
                 } catch {
                     print(error)
                 }
@@ -40,6 +53,7 @@ public struct SidePanePage: View {
         var hasSwiftInterface: Bool { swiftInterfacePath != nil }
     }
 
+    private let platform: Platform
     @Binding private var selection: URL?
 
     @State private var items: [Item] = []
@@ -84,11 +98,9 @@ public struct SidePanePage: View {
     }
 
     private enum Operations {
-        static func loadFrameworks(at url: URL) throws -> [Item] {
+        static func loadFrameworks(at url: URL, within platform: Platform) throws -> [Item] {
             let targetPath = if url.lastPathComponent.contains("Xcode") {
-                url.appending(path: """
-                Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk/System/Library/Frameworks
-                """)
+                url.appending(path: "Contents/Developer/Platforms/\(platform.frameworksPath)")
             } else {
                 url
             }
@@ -135,11 +147,41 @@ public struct SidePanePage: View {
     }
 }
 
+extension Platform {
+    private var value: String {
+        switch self {
+        case .iOS(nil), .iOS(.macCatalyst):
+            "iPhoneOS"
+        case .iOS:
+            "iPhoneSimulator"
+        case .macOS:
+            "MacOSX"
+        case .tvOS(nil):
+            "AppleTVOS"
+        case .tvOS(.simulator):
+            "AppleTVSimulator"
+        case .watchOS(nil):
+            "WatchOS"
+        case .watchOS(.simulator):
+            "WatchSimulator"
+        case .visionOS(nil):
+            "XROS"
+        case .visionOS(.simulator):
+            "XRSimulator"
+        }
+    }
+
+    var frameworksPath: String {
+        let value = value
+        return "\(value).platform/Developer/SDKs/\(value).sdk/System/Library/Frameworks"
+    }
+}
+
 #Preview {
     @Previewable @State var selection: URL?
 
     NavigationSplitView {
-        SidePanePage(selection: $selection)
+        SidePanePage(platform: .iOS(), selection: $selection)
     } detail: {
         Text("Empty")
     }

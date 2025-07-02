@@ -31,16 +31,23 @@ let package = Package(
         .target(
             name: "RootPage",
             dependencies: [
+                "Domain",
+
                 "SidePanePage",
                 "APIViewerPage"
             ]
         ),
         .target(
-            name: "SidePanePage"
+            name: "SidePanePage",
+            dependencies: [
+                "Domain"
+            ]
         ),
         .target(
             name: "APIViewerPage",
             dependencies: [
+                "Domain",
+
                 .product(name: "SwiftParser", package: "swift-syntax"),
                 .product(name: "SwiftSyntax", package: "swift-syntax"),
                 .product(name: "SwiftSyntaxBuilder", package: "swift-syntax"),
@@ -48,6 +55,10 @@ let package = Package(
             resources: [
                 .copy("Resources")
             ]
+        ),
+
+        .target(
+            name: "Domain"
         )
     ]
 )
