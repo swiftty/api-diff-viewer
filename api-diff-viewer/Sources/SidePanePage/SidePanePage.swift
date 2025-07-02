@@ -131,8 +131,15 @@ public struct SidePanePage: View {
                 let isExists = fileManager.fileExists(atPath: modulePath.path(), isDirectory: &isDirectory)
                 guard isExists, isDirectory.boolValue else { return nil }
 
-                for path in try fileManager.contentsOfDirectory(at: modulePath, includingPropertiesForKeys: nil)
-                where path.pathExtension == "swiftinterface" {
+                let contents = try fileManager
+                    .contentsOfDirectory(at: modulePath, includingPropertiesForKeys: [.fileSizeKey])
+                    .sorted(using: KeyPathComparator(\.lastPathComponent))
+                    .sorted(by: { url1, url2 in
+                        let size1 = try url1.resourceValues(forKeys: [.fileSizeKey]).fileSize ?? 0
+                        let size2 = try url2.resourceValues(forKeys: [.fileSizeKey]).fileSize ?? 0
+                        return size1 > size2 && url1.lastPathComponent > url2.lastPathComponent
+                    })
+                for path in contents where path.pathExtension == "swiftinterface" {
                     return path
                 }
                 return nil
