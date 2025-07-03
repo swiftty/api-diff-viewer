@@ -85,6 +85,10 @@ class SyntaxFilter: SyntaxRewriter {
         filter(node, fallback: super.visit)
     }
 
+    override func visit(_ node: ActorDeclSyntax) -> DeclSyntax {
+        filter(node, fallback: super.visit)
+    }
+
     override func visit(_ node: ClassDeclSyntax) -> DeclSyntax {
         filter(node, fallback: super.visit)
     }

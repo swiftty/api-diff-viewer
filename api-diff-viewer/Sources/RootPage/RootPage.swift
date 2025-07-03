@@ -19,6 +19,7 @@ public struct RootPage: View {
                 )
             }
         }
+        .navigationTitle("Diff Viewer")
         .toolbar {
             ToolbarItem {
                 Picker("Platform", selection: $selectedPlatform) {

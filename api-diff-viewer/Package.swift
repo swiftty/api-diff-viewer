@@ -59,6 +59,13 @@ let package = Package(
 
         .target(
             name: "Domain"
+        ),
+
+        .testTarget(
+            name: "APIViewerPageTests",
+            dependencies: [
+                "APIViewerPage"
+            ]
         )
     ]
 )
