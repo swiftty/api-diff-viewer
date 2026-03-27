@@ -1,0 +1,31 @@
+name: test
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/cache@v5
+        with:
+          path: DerivedData
+          key: ${{ runner.os }}-deriveddata-${{ hashFiles('**/Package.resolved') }}
+          restore-keys: |
+            ${{ runner.os }}-deriveddata-${{ hashFiles('**/Package.resolved') }}
+            ${{ runner.os }}-deriveddata
+      - name: Select Xcode
+        shell: bash
+        run: |
+          sudo xcode-select --switch "/Applications/Xcode_26.3.app"
+      - name: Make prject
+        run: make project
+      - name: Build project
+        run: |
+          xcodebuild clean build -scheme App \
+            -skipPackagePluginValidation \
+            CODE_SIGN_IDENTITY="" \
+            CODE_SIGNING_REQUIRED="NO" \
+            CODE_SIGNING_ALLOWED="NO"

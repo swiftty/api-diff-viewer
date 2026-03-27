@@ -1,0 +1,33 @@
+{
+  "originHash" : "396f206ab4cc751ce4a758bb14027c1c0976ca154fa86e516c04647bb43d9fd1",
+  "pins" : [
+    {
+      "identity" : "swift-syntax",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/swiftlang/swift-syntax.git",
+      "state" : {
+        "revision" : "f99ae8aa18f0cf0d53481901f88a0991dc3bd4a2",
+        "version" : "601.0.1"
+      }
+    },
+    {
+      "identity" : "swiftlintbinary",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/swiftty/SwiftLintBinary.git",
+      "state" : {
+        "revision" : "00ea053ced1418050bea522599de20cab4da4667",
+        "version" : "0.63.2"
+      }
+    },
+    {
+      "identity" : "xcodegenbinary",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/swiftty/XcodeGenBinary.git",
+      "state" : {
+        "revision" : "6af4796aff5e7295f5ad879d68deeba6622de3d6",
+        "version" : "2.45.3"
+      }
+    }
+  ],
+  "version" : 3
+}
