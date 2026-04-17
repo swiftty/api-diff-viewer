@@ -19,7 +19,7 @@ jobs:
       - name: Select Xcode
         shell: bash
         run: |
-          sudo xcode-select --switch "/Applications/Xcode_26.3.app"
+          sudo xcode-select --switch "/Applications/Xcode_26.4.1.app"
       - name: Make prject
         run: make project
       - name: Build project
