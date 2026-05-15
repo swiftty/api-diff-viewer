@@ -19,6 +19,7 @@ jobs:
       - name: Select Xcode
         shell: bash
         run: |
+          # renovate-xcodereleases: runs-on=macos-15
           sudo xcode-select --switch "/Applications/Xcode_26.3.app"
       - name: Make prject
         run: make project
