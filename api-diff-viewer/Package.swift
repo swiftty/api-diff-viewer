@@ -16,7 +16,7 @@ let package = Package(
         ),
     ],
     dependencies: [
-        .package(url: "https://github.com/swiftlang/swift-syntax.git", from: "601.0.1"),
+        .package(url: "https://github.com/swiftlang/swift-syntax.git", from: "603.0.1"),
 
         .package(url: "https://github.com/swiftty/XcodeGenBinary.git", from: "2.45.3"),
         .package(url: "https://github.com/swiftty/SwiftLintBinary.git", exact: "0.63.2"),
